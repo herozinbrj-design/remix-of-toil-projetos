@@ -1,0 +1,13 @@
+name: Deploy via Coolify
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Coolify deploy
+        run: echo "Deploy triggered — Coolify watches this repo and deploys automatically on push to main."

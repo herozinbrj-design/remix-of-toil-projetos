@@ -1,0 +1,31 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: toil-projetos-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: toil_projetos
+      MYSQL_USER: toil
+      MYSQL_PASSWORD: toil123
+    ports:
+      - "3306:3306"
+    volumes:
+      - toil_mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: toil-projetos-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: toil
+      PMA_PASSWORD: toil123
+      PMA_ARBITRARY: 0
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+
+volumes:
+  toil_mysql_data:

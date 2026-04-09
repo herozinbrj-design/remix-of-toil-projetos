@@ -1,0 +1,32 @@
+<style>
+  /*
+  Usage:
+  
+  1) Insert this code in the <head>
+
+  2) Add to Tailwind Classes: border-gradient before:rounded-lg
+
+  3) Remove existing border styles
+  */
+
+  .border-gradient {
+    position: relative;
+  }
+
+  .border-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    padding: 1px;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    background: linear-gradient(225deg,
+        rgba(255, 255, 255, 0.0) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.0) 100%);
+    pointer-events: none;
+  }
+</style>

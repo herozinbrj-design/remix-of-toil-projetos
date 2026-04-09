@@ -1,0 +1,6 @@
+<!-- 
+  1) Add liquid glass script to body or head 
+  2) Apply this to Inline CSS: --fx-filter: blur(4px) liquid-glass(2, 10) saturate(1.25)
+  3) Remove existing backdrop-blur
+!-->
+<script src="https://www.aura.build/FxFilter.js"></script>

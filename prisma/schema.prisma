@@ -1,0 +1,254 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+}
+
+enum LeadStatus {
+  NOVO
+  EM_ANALISE
+  RESPONDIDO
+  CONVERTIDO
+  ARQUIVADO
+}
+
+enum ProjectStatus {
+  RASCUNHO
+  EM_REVISAO
+  PUBLICADO
+}
+
+// ============================================
+// USERS & AUTH
+// ============================================
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  role      Role     @default(ADMIN)
+  avatar    String?  @db.VarChar(500)
+  active    Boolean  @default(true)
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  permissions UserPermission[]
+
+  @@map("users")
+}
+
+// ============================================
+// PERMISSIONS
+// ============================================
+
+model Permission {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique @db.VarChar(100) // ex: "view_portfolio", "edit_settings"
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  category    String   @db.VarChar(100) // ex: "portfolio", "settings", "leads"
+  createdAt   DateTime @default(now())
+
+  userPermissions UserPermission[]
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model UserPermission {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  permissionId Int
+  granted      Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, permissionId])
+  @@index([userId])
+  @@index([permissionId])
+  @@map("user_permissions")
+}
+
+model RolePermission {
+  id           Int        @id @default(autoincrement())
+  role         Role
+  permissionId Int
+  granted      Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([role, permissionId])
+  @@index([role])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+// ============================================
+// CLIENTS
+// ============================================
+
+model Client {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  email     String?  @unique @db.VarChar(255)
+  phone     String?  @db.VarChar(20)
+  whatsapp  String?  @db.VarChar(20)
+  company   String?  @db.VarChar(255)
+  document  String?  @db.VarChar(20) // CPF ou CNPJ
+  address   String?  @db.VarChar(500)
+  city      String?  @db.VarChar(100)
+  state     String?  @db.VarChar(2)
+  zipCode   String?  @db.VarChar(10)
+  notes     String?  @db.Text
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projects  Portfolio[]
+  leads     Lead[]
+
+  @@map("clients")
+}
+
+// ============================================
+// SERVICES
+// ============================================
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  icon        String   @db.VarChar(100)
+  name        String   @db.VarChar(255)
+  description String   @db.Text
+  image       String   @db.VarChar(500)
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  showOnHome  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("services")
+}
+
+// ============================================
+// PORTFOLIO
+// ============================================
+
+model Portfolio {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(255)
+  category    String        @db.VarChar(100)
+  date        DateTime
+  status      ProjectStatus @default(RASCUNHO)
+  image       String        @db.VarChar(500)
+  description String?       @db.Text
+  showOnHome  Boolean       @default(false)
+  clientId    Int?
+  segmentId   Int?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  client  Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  segment Segment? @relation(fields: [segmentId], references: [id], onDelete: SetNull)
+
+  @@index([clientId])
+  @@index([segmentId])
+  @@map("portfolios")
+}
+
+// ============================================
+// LEADS (contato)
+// ============================================
+
+model Lead {
+  id        Int        @id @default(autoincrement())
+  name      String     @db.VarChar(255)
+  email     String     @db.VarChar(255)
+  phone     String?    @db.VarChar(20)
+  service   String?    @db.VarChar(255)
+  message   String?    @db.Text
+  source    String?    @db.VarChar(100) // site, whatsapp, indicacao
+  status    LeadStatus @default(NOVO)
+  clientId  Int?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  client Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  @@index([clientId])
+  @@index([status])
+  @@map("leads")
+}
+
+// ============================================
+// SEGMENTS
+// ============================================
+
+model Segment {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(255)
+  description String?  @db.Text
+  image       String?  @db.VarChar(500)
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  portfolios Portfolio[]
+
+  @@map("segments")
+}
+
+// ============================================
+// BANNERS
+// ============================================
+
+model Banner {
+  id             Int      @id @default(autoincrement())
+  title          String   @db.VarChar(255)
+  subtitle       String?  @db.VarChar(500)
+  description    String?  @db.Text
+  image          String   @db.VarChar(500)
+  ctaPrimary     String?  @db.VarChar(255)
+  ctaPrimaryLink String?  @db.VarChar(500)
+  ctaSecondary   String?  @db.VarChar(255)
+  ctaSecondaryLink String? @db.VarChar(500)
+  overlayColor   String?  @default("#0a1628") @db.VarChar(20)
+  overlayOpacity Int?     @default(70)
+  link           String?  @db.VarChar(500)
+  active         Boolean  @default(true)
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("banners")
+}
+
+// ============================================
+// SETTINGS (chave/valor)
+// ============================================
+
+model Setting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique @db.VarChar(100)
+  value String @db.Text
+
+  @@map("settings")
+}

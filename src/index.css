@@ -1,0 +1,499 @@
+#lovable-badge {
+  display: none !important;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Electric Button (Design System — Gravyx Style) ──── */
+@keyframes borderTurn {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes borderTurnFromCenter {
+  0%   { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Link wrapper */
+.eb-link {
+  display: inline-flex;
+  text-decoration: none;
+}
+
+/* Outer glass pill */
+.d1b0y {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px;
+  background: linear-gradient(
+    225deg,
+    rgba(240, 242, 255, 0.12) 5%,
+    rgba(255, 255, 255, 0.06) 43%,
+    rgba(255, 255, 255, 0.02) 68%
+  );
+  border: 1px solid rgba(0, 161, 255, 0.2);
+  border-radius: 100px;
+  box-shadow: 0 20px 80px 0 rgba(0, 0, 0, 0.58);
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+.eb-link:hover .d1b0y {
+  border-color: rgba(0, 161, 255, 0.45);
+}
+
+/* Text pill */
+.k6u3f {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(
+    271.55deg,
+    rgba(0, 161, 255, 0.35) 5.88%,
+    rgba(0, 161, 255, 0)    50.22%,
+    rgba(0, 64,  255, 0.35) 95.32%
+  );
+  border: 1px solid rgba(0, 161, 255, 0.55);
+  border-radius: 999px;
+  padding: 13px 22px;
+  font-family: inherit;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  color: #fff;
+  white-space: nowrap;
+  box-shadow:
+    -4px 10px 70px 0 rgba(0, 17, 51, 0.89),
+    -2px  4px 38px 0 #0f0f0f,
+    inset -5px -4px 12px -10px rgba(211, 227, 255, 0.34);
+}
+
+/* Animated icon container */
+.cga8x {
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 999px;
+  position: relative;
+  --animation-speed: 2s;
+  flex-shrink: 0;
+}
+
+/* g3l2a = show animation layers */
+.cga8x.g3l2a .l9p1n { opacity: 1; }
+.cga8x.g3l2a .z3m5q { opacity: 1; }
+
+/* Blur glow layer — square centered over icon container */
+.l9p1n {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: 1s ease opacity;
+  z-index: 1;
+}
+.l9p1n::before {
+  content: "";
+  display: block;
+  padding-top: 100%;
+}
+.l9p1n > * {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+/* Blurred outer glow */
+.t5c2e {
+  animation: borderTurn var(--animation-speed) infinite linear;
+  background-image: conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(0, 161, 255, 1)   0deg,
+    rgba(0, 64,  255, 0)  60deg,
+    rgba(0, 64,  255, 0) 300deg,
+    rgba(211, 227, 255, 1) 360deg
+  );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: blur(6px);
+  opacity: 0.18;
+}
+
+/* Inner spin layer */
+.r8v6d {
+  border-radius: 999px;
+  overflow: hidden;
+}
+.w4h9j {
+  animation: borderTurn var(--animation-speed) infinite linear;
+  background-image: conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(0, 161, 255, 1)   0deg,
+    rgba(0, 64,  255, 0)  60deg,
+    rgba(0, 64,  255, 0) 300deg,
+    rgba(211, 227, 255, 1) 360deg
+  );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Border ring via mask-composite */
+.z3m5q {
+  border-radius: 999px;
+  height: 100%;
+  left: 0;
+  top: 0;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  opacity: 0;
+  padding: 1.5px;
+  pointer-events: none;
+  position: absolute;
+  transition: 1s ease opacity;
+  width: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Spinning gradient inside the ring */
+.f2k7s {
+  animation: borderTurnFromCenter var(--animation-speed) infinite linear;
+  background-image: conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(0, 161, 255, 1)   0deg,
+    rgba(0, 64,  255, 0)  60deg,
+    rgba(0, 64,  255, 0) 300deg,
+    rgba(211, 227, 255, 1) 360deg
+  );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  width: 100%;
+}
+.f2k7s::before {
+  content: "";
+  display: block;
+  padding-top: 100%;
+}
+
+/* Dark circle holding the arrow icon */
+.eb-icon-wrap {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #060d1f 0%, #0a1628 100%);
+  margin: 1px;
+}
+
+.s0a8l {
+  width: 18px;
+  height: 18px;
+  color: white;
+  flex-shrink: 0;
+}
+
+/* Full-width variant */
+.eb-link.eb-full {
+  width: 100%;
+}
+.eb-link.eb-full .d1b0y {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ── Glow Rotate Button ─────────────────────────────── */
+@keyframes glow-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.glow-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 2px;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.glow-btn::before {
+  content: '';
+  position: absolute;
+  inset: -60%;
+  width: 220%;
+  height: 220%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(99, 179, 237, 0)   80deg,
+    rgba(99, 179, 237, 0.9) 120deg,
+    rgba(196, 181, 253, 1)  150deg,
+    rgba(99, 179, 237, 0.9) 180deg,
+    rgba(99, 179, 237, 0)   220deg,
+    transparent 360deg
+  );
+  animation: glow-rotate 2.4s linear infinite;
+}
+
+.glow-btn-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 9999px;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #0d1b3e 0%, #111827 50%, #1a1040 100%);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+  white-space: nowrap;
+  transition: background 0.3s;
+}
+
+.glow-btn:hover .glow-btn-inner {
+  background: linear-gradient(135deg, #1a2f5e 0%, #1f2937 50%, #261560 100%);
+}
+
+.glow-btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  flex-shrink: 0;
+}
+
+/* ── Variante pequena (Navbar) */
+.glow-btn-sm .glow-btn-inner {
+  padding: 9px 22px;
+  font-size: 0.8125rem;
+}
+
+/* ── Variante fantasma / secundária (border translúcido) */
+.glow-btn-ghost .glow-btn-inner {
+  background: rgba(10, 20, 50, 0.35);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(99, 179, 237, 0.15);
+}
+.glow-btn-ghost:hover .glow-btn-inner {
+  background: rgba(15, 30, 70, 0.55);
+}
+
+/* ── Variante full-width (botões de formulário) */
+button.glow-btn,
+.glow-btn-full {
+  width: 100%;
+  display: flex;
+}
+button.glow-btn .glow-btn-inner,
+.glow-btn-full .glow-btn-inner {
+  width: 100%;
+  justify-content: center;
+}
+button.glow-btn {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+@layer base {
+  :root {
+    --background: 222 40% 8%;
+    --foreground: 210 40% 96%;
+
+    --card: 221 35% 14%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 221 35% 14%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 222 28% 19%;
+    --secondary-foreground: 210 40% 96%;
+
+    --muted: 222 28% 19%;
+    --muted-foreground: 215 20% 56%;
+
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 28% 22%;
+    --input: 220 28% 22%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 221 35% 14%;
+    --sidebar-foreground: 210 15% 85%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 28% 19%;
+    --sidebar-accent-foreground: 210 15% 85%;
+    --sidebar-border: 220 28% 22%;
+    --sidebar-ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+/* ─── Keyframes ─── */
+
+@keyframes animationIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-portfolio {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-25%); }
+}
+
+@keyframes marquee-logos {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-25%); }
+}
+
+@keyframes scroll-infinite {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-in {
+  animation: animationIn 0.8s ease-out both;
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* ─── Border Gradient Utility ─── */
+
+.border-gradient {
+  position: relative;
+}
+
+.border-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 1px;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  background: linear-gradient(225deg,
+      rgba(255, 255, 255, 0.0) 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.0) 100%);
+  pointer-events: none;
+}
+
+/* ─── Alpha Mask Utility ─── */
+
+.mask-horizontal {
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+.mask-vertical {
+  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+}
+
+/* ─── Scroll-triggered animation ─── */
+
+.animate-on-scroll {
+  animation-play-state: paused !important;
+}
+
+.animate-on-scroll.animate {
+  animation-play-state: running !important;
+}
+
+/* ─── Smooth scrollbar ─── */
+
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(215 50% 8%);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(215 30% 22%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(210 80% 45%);
+}

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker exec:*)",
+      "Bash(npm install:*)",
+      "WebFetch(domain:gravyx.com.br)",
+      "Read(//c/projetos-dev/Tool/ Projetos/remix-of-toil-projetos/prisma/**)",
+      "Read(//c/projetos-dev/Tool/ Projetos/remix-of-toil-projetos/src/admin/pages/**)"
+    ]
+  }
+}

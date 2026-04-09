@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "coolify": {
+      "command": "node",
+      "args": ["./mcp/coolify.js"],
+      "env": {
+        "COOLIFY_URL": "https://coolify.integrasac.com.br/api/v1",
+        "COOLIFY_KEY": "5|w5OwAzsYNmeXBmy5DGnotdGrgWa9WvXTFEogmQ9Hfcfc72ea"
+      },
+      "autoApprove": ["list_apps", "deploy_app"]
+    }
+  }
+}
