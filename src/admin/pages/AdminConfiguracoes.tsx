@@ -74,6 +74,7 @@ const navSections: NavSection[] = [
   {
     title: "INTEGRAÇÕES",
     items: [
+      { id: "google", label: "Google", icon: Globe, permission: "edit_settings_integrations" },
       { id: "smtp", label: "E-mail (SMTP)", icon: Mail, permission: "edit_settings_smtp" },
     ],
   },
@@ -319,6 +320,20 @@ export default function AdminConfiguracoes() {
         translateY: parseFloat(data.animation_reveal_y) || 30,
         duration: parseFloat(data.animation_reveal_duration) || 0.7,
       });
+      setGoogleForm((prev) => ({
+        recaptchaEnabled: data.google_recaptcha_enabled || "false",
+        recaptchaVersion: data.google_recaptcha_version || "v3",
+        recaptchaSiteKeyV2: data.google_recaptcha_site_key_v2 || "",
+        recaptchaSecretKeyV2: data.google_recaptcha_secret_key_v2 || "",
+        recaptchaSiteKeyV3: data.google_recaptcha_site_key_v3 || "",
+        recaptchaSecretKeyV3: data.google_recaptcha_secret_key_v3 || "",
+        gtmEnabled: data.google_gtm_enabled || "false",
+        gtmId: data.google_gtm_id || "",
+        analyticsEnabled: data.google_analytics_enabled || "false",
+        analyticsId: data.google_analytics_id || "",
+        adsEnabled: data.google_ads_enabled || "false",
+        adsId: data.google_ads_id || "",
+      }));
       setSettingsLoaded(true);
     } catch {
       toast.error("Erro ao carregar configurações");
@@ -384,6 +399,22 @@ export default function AdminConfiguracoes() {
   });
   const [smtpTesting, setSmtpTesting] = useState(false);
   const [smtpTestEmail, setSmtpTestEmail] = useState("");
+
+  const [googleForm, setGoogleForm] = useState({
+    recaptchaEnabled: "false",
+    recaptchaVersion: "v3",
+    recaptchaSiteKeyV2: "",
+    recaptchaSecretKeyV2: "",
+    recaptchaSiteKeyV3: "",
+    recaptchaSecretKeyV3: "",
+    gtmEnabled: "false",
+    gtmId: "",
+    analyticsEnabled: "false",
+    analyticsId: "",
+    adsEnabled: "false",
+    adsId: "",
+  });
+  const updateGoogle = (key: string, value: string) => setGoogleForm((prev) => ({ ...prev, [key]: value }));
 
   const [sobreForm, setSobreForm] = useState({
     heroBadge: "Sobre nós",
@@ -750,6 +781,8 @@ export default function AdminConfiguracoes() {
                 {activeSection === "cores" && "Cores do tema, botões e personalizações visuais"}
                 {activeSection === "logos" && "Logomarcas do header e footer"}
                 {activeSection === "fontes" && "Fontes de títulos e corpo do texto"}
+                {activeSection === "animacoes" && "Efeito de revelação com blur ao rolar a página"}
+                {activeSection === "google" && "Integrações com Google: reCAPTCHA, Analytics, GTM e Google Ads"}
                 {activeSection === "smtp" && "Configuração de envio de e-mails"}
                 {activeSection === "carrossel" && "Texto do lado esquerdo e imagens do carrossel na página inicial"}
                 {activeSection === "clientes" && "Carrossel horizontal de logos de clientes na página inicial"}
@@ -1585,6 +1618,263 @@ export default function AdminConfiguracoes() {
                   site_heading_font: headingFont,
                   site_body_font: bodyFont,
                 }, "Tipografia")}>Salvar Tipografia</Button>
+              </div>
+            </div>
+          )}
+
+          {/* GOOGLE */}
+          {activeSection === "google" && (
+            <div className="space-y-6">
+              {/* reCAPTCHA */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Google reCAPTCHA</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-1">Proteja seus formulários contra spam e bots</p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Label>Ativar reCAPTCHA</Label>
+                    <Select value={googleForm.recaptchaEnabled} onValueChange={(v) => updateGoogle("recaptchaEnabled", v)}>
+                      <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="true">Ativado</SelectItem>
+                        <SelectItem value="false">Desativado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {googleForm.recaptchaEnabled === "true" && (
+                    <>
+                      <div className="space-y-2">
+                        <Label>Versão do reCAPTCHA</Label>
+                        <Select value={googleForm.recaptchaVersion} onValueChange={(v) => updateGoogle("recaptchaVersion", v)}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="v2">v2 (Checkbox "Não sou um robô")</SelectItem>
+                            <SelectItem value="v3">v3 (Invisível, baseado em score)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground">
+                          {googleForm.recaptchaVersion === "v2" 
+                            ? "Exibe um checkbox que o usuário precisa marcar"
+                            : "Funciona em segundo plano sem interação do usuário"}
+                        </p>
+                      </div>
+
+                      <Separator />
+
+                      {googleForm.recaptchaVersion === "v2" && (
+                        <div className="space-y-4">
+                          <p className="text-sm font-medium">Chaves reCAPTCHA v2</p>
+                          <div className="space-y-2">
+                            <Label>Site Key (v2)</Label>
+                            <Input 
+                              value={googleForm.recaptchaSiteKeyV2} 
+                              onChange={(e) => updateGoogle("recaptchaSiteKeyV2", e.target.value)} 
+                              placeholder="6Lc..." 
+                            />
+                            <p className="text-xs text-muted-foreground">Chave pública usada no frontend</p>
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Secret Key (v2)</Label>
+                            <Input 
+                              type="password"
+                              value={googleForm.recaptchaSecretKeyV2} 
+                              onChange={(e) => updateGoogle("recaptchaSecretKeyV2", e.target.value)} 
+                              placeholder="6Lc..." 
+                            />
+                            <p className="text-xs text-muted-foreground">Chave secreta usada no backend</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {googleForm.recaptchaVersion === "v3" && (
+                        <div className="space-y-4">
+                          <p className="text-sm font-medium">Chaves reCAPTCHA v3</p>
+                          <div className="space-y-2">
+                            <Label>Site Key (v3)</Label>
+                            <Input 
+                              value={googleForm.recaptchaSiteKeyV3} 
+                              onChange={(e) => updateGoogle("recaptchaSiteKeyV3", e.target.value)} 
+                              placeholder="6Lc..." 
+                            />
+                            <p className="text-xs text-muted-foreground">Chave pública usada no frontend</p>
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Secret Key (v3)</Label>
+                            <Input 
+                              type="password"
+                              value={googleForm.recaptchaSecretKeyV3} 
+                              onChange={(e) => updateGoogle("recaptchaSecretKeyV3", e.target.value)} 
+                              placeholder="6Lc..." 
+                            />
+                            <p className="text-xs text-muted-foreground">Chave secreta usada no backend</p>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="bg-muted/50 rounded-lg p-4 text-xs space-y-2">
+                        <p className="font-medium">Como obter as chaves:</p>
+                        <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                          <li>Acesse <a href="https://www.google.com/recaptcha/admin" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google reCAPTCHA Admin</a></li>
+                          <li>Faça login com sua conta Google</li>
+                          <li>Clique em "+" para registrar um novo site</li>
+                          <li>Escolha a versão (v2 ou v3) e adicione seu domínio</li>
+                          <li>Copie as chaves Site Key e Secret Key</li>
+                        </ol>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Google Tag Manager */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Google Tag Manager (GTM)</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-1">Gerencie todas as tags de marketing em um só lugar</p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Label>Ativar GTM</Label>
+                    <Select value={googleForm.gtmEnabled} onValueChange={(v) => updateGoogle("gtmEnabled", v)}>
+                      <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="true">Ativado</SelectItem>
+                        <SelectItem value="false">Desativado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {googleForm.gtmEnabled === "true" && (
+                    <>
+                      <div className="space-y-2">
+                        <Label>GTM Container ID</Label>
+                        <Input 
+                          value={googleForm.gtmId} 
+                          onChange={(e) => updateGoogle("gtmId", e.target.value)} 
+                          placeholder="GTM-XXXXXXX" 
+                        />
+                        <p className="text-xs text-muted-foreground">Formato: GTM-XXXXXXX</p>
+                      </div>
+
+                      <div className="bg-muted/50 rounded-lg p-4 text-xs space-y-2">
+                        <p className="font-medium">Como obter o Container ID:</p>
+                        <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                          <li>Acesse <a href="https://tagmanager.google.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google Tag Manager</a></li>
+                          <li>Crie uma conta e um container para seu site</li>
+                          <li>Copie o ID do container (GTM-XXXXXXX)</li>
+                        </ol>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Google Analytics */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Google Analytics 4 (GA4)</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-1">Acompanhe visitantes e comportamento no site</p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Label>Ativar Analytics</Label>
+                    <Select value={googleForm.analyticsEnabled} onValueChange={(v) => updateGoogle("analyticsEnabled", v)}>
+                      <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="true">Ativado</SelectItem>
+                        <SelectItem value="false">Desativado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {googleForm.analyticsEnabled === "true" && (
+                    <>
+                      <div className="space-y-2">
+                        <Label>Measurement ID (GA4)</Label>
+                        <Input 
+                          value={googleForm.analyticsId} 
+                          onChange={(e) => updateGoogle("analyticsId", e.target.value)} 
+                          placeholder="G-XXXXXXXXXX" 
+                        />
+                        <p className="text-xs text-muted-foreground">Formato: G-XXXXXXXXXX</p>
+                      </div>
+
+                      <div className="bg-muted/50 rounded-lg p-4 text-xs space-y-2">
+                        <p className="font-medium">Como obter o Measurement ID:</p>
+                        <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                          <li>Acesse <a href="https://analytics.google.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google Analytics</a></li>
+                          <li>Crie uma propriedade GA4</li>
+                          <li>Em Admin → Fluxos de dados → Web, copie o Measurement ID</li>
+                        </ol>
+                        <p className="text-amber-600 mt-2">⚠️ Se usar GTM, configure o Analytics através dele (recomendado)</p>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Google Ads */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Google Ads (Conversões)</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-1">Rastreie conversões de campanhas do Google Ads</p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Label>Ativar Google Ads</Label>
+                    <Select value={googleForm.adsEnabled} onValueChange={(v) => updateGoogle("adsEnabled", v)}>
+                      <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="true">Ativado</SelectItem>
+                        <SelectItem value="false">Desativado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {googleForm.adsEnabled === "true" && (
+                    <>
+                      <div className="space-y-2">
+                        <Label>Google Ads Conversion ID</Label>
+                        <Input 
+                          value={googleForm.adsId} 
+                          onChange={(e) => updateGoogle("adsId", e.target.value)} 
+                          placeholder="AW-XXXXXXXXXX" 
+                        />
+                        <p className="text-xs text-muted-foreground">Formato: AW-XXXXXXXXXX</p>
+                      </div>
+
+                      <div className="bg-muted/50 rounded-lg p-4 text-xs space-y-2">
+                        <p className="font-medium">Como obter o Conversion ID:</p>
+                        <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                          <li>Acesse <a href="https://ads.google.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google Ads</a></li>
+                          <li>Vá em Ferramentas → Medição → Conversões</li>
+                          <li>Crie uma ação de conversão</li>
+                          <li>Copie o ID de conversão (AW-XXXXXXXXXX)</li>
+                        </ol>
+                        <p className="text-amber-600 mt-2">⚠️ Se usar GTM, configure as conversões através dele (recomendado)</p>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-end">
+                <Button onClick={() => saveSettings({
+                  google_recaptcha_enabled: googleForm.recaptchaEnabled,
+                  google_recaptcha_version: googleForm.recaptchaVersion,
+                  google_recaptcha_site_key_v2: googleForm.recaptchaSiteKeyV2,
+                  google_recaptcha_secret_key_v2: googleForm.recaptchaSecretKeyV2,
+                  google_recaptcha_site_key_v3: googleForm.recaptchaSiteKeyV3,
+                  google_recaptcha_secret_key_v3: googleForm.recaptchaSecretKeyV3,
+                  google_gtm_enabled: googleForm.gtmEnabled,
+                  google_gtm_id: googleForm.gtmId,
+                  google_analytics_enabled: googleForm.analyticsEnabled,
+                  google_analytics_id: googleForm.analyticsId,
+                  google_ads_enabled: googleForm.adsEnabled,
+                  google_ads_id: googleForm.adsId,
+                }, "Integrações Google")}>Salvar Integrações Google</Button>
               </div>
             </div>
           )}

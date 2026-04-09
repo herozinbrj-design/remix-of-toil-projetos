@@ -9,7 +9,19 @@ const router = Router();
 // POST /api/leads (público - formulário de contato)
 router.post("/", async (req, res) => {
   try {
-    const lead = await prisma.lead.create({ data: req.body });
+    console.log("Recebendo lead:", req.body);
+    const lead = await prisma.lead.create({ 
+      data: {
+        name: req.body.name,
+        email: req.body.email,
+        phone: req.body.phone,
+        service: req.body.service,
+        message: req.body.message,
+        source: req.body.source || "site",
+        status: "NOVO",
+      }
+    });
+    console.log("Lead criado com sucesso:", lead.id);
     
     // Enviar e-mail de notificação (não bloqueia a resposta)
     sendLeadNotification({

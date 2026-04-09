@@ -45,6 +45,7 @@ async function main() {
     { key: "edit_settings_animations", name: "Editar Animações", category: "settings", description: "Modificar animações" },
     
     // Configurações - Integrações
+    { key: "edit_settings_integrations", name: "Editar Integrações Google", category: "settings", description: "Configurar Google reCAPTCHA, GTM, Analytics e Ads" },
     { key: "edit_settings_smtp", name: "Editar SMTP", category: "settings", description: "Configurar e-mail SMTP" },
     
     // Usuários
