@@ -18,6 +18,7 @@ import uploadRoutes from "./routes/upload.js";
 import seoRoutes from "./routes/seo.js";
 import smtpTestRoutes from "./routes/smtp-test.js";
 import analyticsRoutes from "./routes/analytics.js";
+import googleScriptsRoutes from "./routes/google-scripts.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -54,6 +55,7 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/smtp", smtpTestRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/google-scripts.js", googleScriptsRoutes);
 app.use("/", seoRoutes);
 
 // Servir frontend SPA em produção (quando dist/ existir)

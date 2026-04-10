@@ -16,7 +16,6 @@ import { PortfolioProvider } from "./contexts/PortfolioContext";
 import { AnimationProvider } from "./contexts/AnimationContext";
 import { SettingsProvider } from "./contexts/SettingsContext";
 import { PermissionsProvider } from "./contexts/PermissionsContext";
-import GoogleScripts from "./components/GoogleScripts";
 
 // Admin
 import AdminLayout from "./admin/components/AdminLayout";
@@ -39,7 +38,6 @@ function App() {
     <ServicesProvider>
       <PortfolioProvider>
         <PermissionsProvider>
-        <GoogleScripts />
         <BrowserRouter>
           <Routes>
             <Route
