@@ -3,6 +3,40 @@ import { prisma } from "../prisma.js";
 
 const router = Router();
 
+// GET /google-scripts.js/debug - Debug das configurações (apenas em desenvolvimento)
+router.get("/debug", async (req, res) => {
+  try {
+    const settings = await prisma.setting.findMany({
+      where: {
+        key: {
+          in: [
+            "google_recaptcha_enabled",
+            "google_recaptcha_version",
+            "google_recaptcha_site_key_v2",
+            "google_recaptcha_site_key_v3",
+            "google_gtm_enabled",
+            "google_gtm_id",
+            "google_analytics_enabled",
+            "google_analytics_id",
+            "google_ads_enabled",
+            "google_ads_id",
+          ],
+        },
+      },
+    });
+
+    const config = Object.fromEntries(settings.map((s) => [s.key, s.value]));
+    
+    res.json({
+      message: "Configurações do Google",
+      settings: settings,
+      config: config,
+    });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 // GET /google-scripts.js - Retorna script dinâmico com configurações do Google
 router.get("/", async (req, res) => {
   try {

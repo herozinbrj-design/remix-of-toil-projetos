@@ -331,6 +331,7 @@ export default function AdminConfiguracoes() {
         gtmId: data.google_gtm_id || "",
         analyticsEnabled: data.google_analytics_enabled || "false",
         analyticsId: data.google_analytics_id || "",
+        analyticsPropertyId: data.google_analytics_property_id || "",
         adsEnabled: data.google_ads_enabled || "false",
         adsId: data.google_ads_id || "",
       }));
@@ -411,6 +412,7 @@ export default function AdminConfiguracoes() {
     gtmId: "",
     analyticsEnabled: "false",
     analyticsId: "",
+    analyticsPropertyId: "",
     adsEnabled: "false",
     adsId: "",
   });
@@ -1801,6 +1803,18 @@ export default function AdminConfiguracoes() {
                         <p className="text-xs text-muted-foreground">Formato: G-XXXXXXXXXX</p>
                       </div>
 
+                      <div className="space-y-2">
+                        <Label>Property ID (para API de dados)</Label>
+                        <Input 
+                          value={googleForm.analyticsPropertyId} 
+                          onChange={(e) => updateGoogle("analyticsPropertyId", e.target.value)} 
+                          placeholder="123456789" 
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Número da propriedade (encontre em Admin → Detalhes da propriedade)
+                        </p>
+                      </div>
+
                       <div className="bg-muted/50 rounded-lg p-4 text-xs space-y-2">
                         <p className="font-medium">Como obter o Measurement ID:</p>
                         <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
@@ -1883,6 +1897,7 @@ export default function AdminConfiguracoes() {
                   google_gtm_id: googleForm.gtmId,
                   google_analytics_enabled: googleForm.analyticsEnabled,
                   google_analytics_id: googleForm.analyticsId,
+                  google_analytics_property_id: googleForm.analyticsPropertyId,
                   google_ads_enabled: googleForm.adsEnabled,
                   google_ads_id: googleForm.adsId,
                 }, "Integrações Google")}>Salvar Integrações Google</Button>
