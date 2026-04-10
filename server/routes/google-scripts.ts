@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
 
     const config = Object.fromEntries(settings.map((s) => [s.key, s.value]));
 
-    let script = `// Google Scripts - Gerado dinamicamente\n\n`;
+    let script = `// Google Scripts - Gerado dinamicamente\nconsole.log('Google Scripts carregado');\n\n`;
 
     // Google Tag Manager
     if (config.google_gtm_enabled === "true" && config.google_gtm_id) {
@@ -37,6 +37,7 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','${config.google_gtm_id}');
+console.log('GTM carregado: ${config.google_gtm_id}');
 `;
     }
 
@@ -48,17 +49,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     ) {
       script += `
 // Google Analytics 4
-(function() {
-  var script = document.createElement('script');
-  script.async = true;
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=${config.google_analytics_id}';
-  document.head.appendChild(script);
-  
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', '${config.google_analytics_id}');
-})();
+console.log('Carregando GA4: ${config.google_analytics_id}');
+var gaScript = document.createElement('script');
+gaScript.async = true;
+gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=${config.google_analytics_id}';
+document.head.appendChild(gaScript);
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${config.google_analytics_id}');
+console.log('GA4 configurado: ${config.google_analytics_id}');
 `;
     }
 
@@ -72,6 +73,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 // Google Ads
 if (typeof gtag !== 'undefined') {
   gtag('config', '${config.google_ads_id}');
+  console.log('Google Ads configurado: ${config.google_ads_id}');
 }
 `;
     }
@@ -81,26 +83,28 @@ if (typeof gtag !== 'undefined') {
       if (config.google_recaptcha_version === "v2" && config.google_recaptcha_site_key_v2) {
         script += `
 // Google reCAPTCHA v2
-(function() {
-  var script = document.createElement('script');
-  script.async = true;
-  script.defer = true;
-  script.src = 'https://www.google.com/recaptcha/api.js';
-  document.head.appendChild(script);
-})();
+var recaptchaScript = document.createElement('script');
+recaptchaScript.async = true;
+recaptchaScript.defer = true;
+recaptchaScript.src = 'https://www.google.com/recaptcha/api.js';
+document.head.appendChild(recaptchaScript);
+console.log('reCAPTCHA v2 carregado');
 `;
       } else if (config.google_recaptcha_version === "v3" && config.google_recaptcha_site_key_v3) {
         script += `
 // Google reCAPTCHA v3
-(function() {
-  var script = document.createElement('script');
-  script.async = true;
-  script.defer = true;
-  script.src = 'https://www.google.com/recaptcha/api.js?render=${config.google_recaptcha_site_key_v3}';
-  document.head.appendChild(script);
-})();
+var recaptchaScript = document.createElement('script');
+recaptchaScript.async = true;
+recaptchaScript.defer = true;
+recaptchaScript.src = 'https://www.google.com/recaptcha/api.js?render=${config.google_recaptcha_site_key_v3}';
+document.head.appendChild(recaptchaScript);
+console.log('reCAPTCHA v3 carregado');
 `;
       }
+    }
+
+    if (script === `// Google Scripts - Gerado dinamicamente\nconsole.log('Google Scripts carregado');\n\n`) {
+      script += `console.log('Nenhuma integração Google configurada');`;
     }
 
     res.setHeader("Content-Type", "application/javascript");
@@ -109,7 +113,7 @@ if (typeof gtag !== 'undefined') {
   } catch (error) {
     console.error("Erro ao gerar google-scripts.js:", error);
     res.setHeader("Content-Type", "application/javascript");
-    res.send("// Erro ao carregar scripts do Google");
+    res.send("console.error('Erro ao carregar scripts do Google');");
   }
 });
 
