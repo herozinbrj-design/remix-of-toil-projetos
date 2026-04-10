@@ -34,18 +34,18 @@ router.get("/stats", authMiddleware, async (req, res) => {
       });
     }
 
-    // Por enquanto, retornar dados mockados
-    // TODO: Implementar integração real com Google Analytics Data API
-    // Requer configuração de Service Account e credenciais
+    // Retornar indicação de que Analytics está configurado mas dados não estão disponíveis
+    // Para obter dados reais, seria necessário configurar Google Analytics Data API
+    // com Service Account e credenciais
     res.json({
       enabled: true,
-      message: "Dados simulados - Configure Service Account para dados reais",
+      message: "Google Analytics configurado. Dados em tempo real disponíveis no Google Analytics.",
       stats: {
-        visitors: Math.floor(Math.random() * 5000) + 3000,
-        pageviews: Math.floor(Math.random() * 15000) + 10000,
-        sessions: Math.floor(Math.random() * 6000) + 4000,
-        bounceRate: Math.floor(Math.random() * 30) + 40,
-        avgSessionDuration: Math.floor(Math.random() * 180) + 120,
+        visitors: 0,
+        pageviews: 0,
+        sessions: 0,
+        bounceRate: 0,
+        avgSessionDuration: 0,
       },
     });
   } catch (error) {

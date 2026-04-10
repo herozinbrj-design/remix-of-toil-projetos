@@ -1810,6 +1810,17 @@ export default function AdminConfiguracoes() {
                         </ol>
                         <p className="text-amber-600 mt-2">⚠️ Se usar GTM, configure o Analytics através dele (recomendado)</p>
                       </div>
+
+                      <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 text-xs space-y-2">
+                        <p className="font-medium text-blue-600">Como verificar se está funcionando:</p>
+                        <ol className="list-decimal list-inside space-y-1 text-blue-600">
+                          <li>Salve as configurações acima</li>
+                          <li>Abra o site em uma aba anônima</li>
+                          <li>No Google Analytics, vá em Relatórios → Tempo real</li>
+                          <li>Você deve ver sua visita aparecendo em tempo real</li>
+                          <li>Se não aparecer, verifique se o Measurement ID está correto</li>
+                        </ol>
+                      </div>
                     </>
                   )}
                 </CardContent>

@@ -281,11 +281,9 @@ export default function AdminDashboard() {
       <PageHeader title="Dashboard" subtitle="Visão geral do seu site e negócio" />
 
       {/* Stats - Linha 1 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
         {loading ? (
           <>
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
             <Skeleton className="h-32" />
             <Skeleton className="h-32" />
             <Skeleton className="h-32" />
@@ -294,28 +292,17 @@ export default function AdminDashboard() {
           <>
             <StatCardItem label="Leads / Orçamentos" value={stats.totalLeads.toString()} change={0} icon={Users} />
             <StatCardItem label="Projetos no Portfólio Ativos" value={stats.activeProjects.toString()} change={0} icon={Image} />
-            <StatCardItem label="Visitantes (mês)" value={stats.visitors > 0 ? formatNumber(stats.visitors) : "—"} change={0} icon={Globe} />
-            <StatCardItem label="Visualizações de Página" value={stats.pageviews > 0 ? formatNumber(stats.pageviews) : "—"} change={0} icon={Globe} />
-            <StatCardItem label="Taxa de Rejeição" value={stats.bounceRate > 0 ? `${stats.bounceRate}%` : "—"} change={0} icon={Globe} />
+            <StatCardItem label="Visitantes (mês)" value="Ver no GA4" change={0} icon={Globe} />
           </>
         )}
       </div>
 
-      {/* Stats - Linha 2 (Google Analytics) */}
-      {!loading && stats.sessions > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          <StatCardItem label="Sessões" value={formatNumber(stats.sessions)} change={0} icon={Globe} />
-          <StatCardItem label="Duração Média da Sessão" value={formatDuration(stats.avgSessionDuration)} change={0} icon={Globe} />
-          <StatCardItem label="Páginas por Sessão" value={stats.sessions > 0 ? (stats.pageviews / stats.sessions).toFixed(2) : "—"} change={0} icon={Globe} />
-        </div>
-      )}
-
-      {!loading && stats.visitors === 0 && (
+      {!loading && (
         <div className="mb-8">
-          <Card className="border-amber-500/50 bg-amber-500/5">
+          <Card className="border-blue-500/50 bg-blue-500/5">
             <CardContent className="p-4">
-              <p className="text-sm text-amber-600">
-                ℹ️ Configure o Google Analytics em <a href="/admin/configuracoes?secao=google" className="underline font-medium">Configurações → Google</a> para ver dados reais de visitantes
+              <p className="text-sm text-blue-600">
+                ℹ️ As métricas de visitantes estão disponíveis em tempo real no <a href="https://analytics.google.com" target="_blank" rel="noopener noreferrer" className="underline font-medium">Google Analytics</a>. Configure o Google Analytics em <a href="/admin/configuracoes?secao=google" className="underline font-medium">Configurações → Google</a> para começar a rastrear.
               </p>
             </CardContent>
           </Card>
