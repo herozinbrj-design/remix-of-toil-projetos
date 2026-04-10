@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePermissions } from "../../contexts/PermissionsContext";
 
 interface Lead {
   id: number;
@@ -78,6 +79,7 @@ function StatCardItem({ label, value, change, icon: Icon }: StatCardProps) {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const { isSuperAdmin } = usePermissions();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<Stats>({ 
     totalLeads: 0, 
@@ -310,7 +312,7 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {!loading && stats.visitors === 0 && (
+      {!loading && stats.visitors === 0 && isSuperAdmin && (
         <div className="mb-8">
           <Card className="border-amber-500/50 bg-amber-500/5">
             <CardContent className="p-4">
