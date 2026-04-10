@@ -66,28 +66,36 @@ Porém, para mostrar esses dados no dashboard do admin, precisamos configurar a 
    - **Property ID**: Cole o número que você copiou (ex: 123456789)
 4. Clique em **Salvar Integrações Google**
 
-### 6. Adicionar credenciais no servidor
+### 6. Adicionar credenciais no Coolify (IMPORTANTE!)
 
-Você tem duas opções:
+1. Abra o arquivo JSON que você baixou no Passo 2
+2. Copie **TODO** o conteúdo do arquivo (é um JSON grande)
+3. Acesse o Coolify: https://coolify.integrasac.com.br
+4. Vá no projeto **toilprojetos**
+5. Clique em **Environment Variables**
+6. Clique em **+ Add**
+7. Preencha:
+   - **Key**: `GOOGLE_APPLICATION_CREDENTIALS_JSON`
+   - **Value**: Cole o conteúdo completo do arquivo JSON
+8. Clique em **Save**
+9. **Reinicie a aplicação** (Deploy → Restart)
 
-#### Opção A: Via variável de ambiente (Recomendado para produção)
+**Exemplo do conteúdo que você deve colar:**
+```json
+{
+  "type": "service_account",
+  "project_id": "seu-projeto-123456",
+  "private_key_id": "abc123...",
+  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+  "client_email": "analytics-reader@seu-projeto.iam.gserviceaccount.com",
+  "client_id": "123456789",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  ...
+}
+```
 
-1. Abra o arquivo JSON baixado
-2. Copie todo o conteúdo
-3. No Coolify, adicione uma variável de ambiente:
-   - Nome: `GOOGLE_APPLICATION_CREDENTIALS_JSON`
-   - Valor: Cole o conteúdo do arquivo JSON
-4. Reinicie a aplicação
-
-#### Opção B: Via arquivo (Para desenvolvimento local)
-
-1. Coloque o arquivo JSON na raiz do projeto
-2. Renomeie para `google-credentials.json`
-3. Adicione ao `.gitignore` (já está)
-4. Crie variável de ambiente:
-   ```
-   GOOGLE_APPLICATION_CREDENTIALS=./google-credentials.json
-   ```
+⚠️ **IMPORTANTE**: Cole o JSON completo, incluindo as chaves `{` e `}` no início e fim!
 
 ## ✅ Testar
 
