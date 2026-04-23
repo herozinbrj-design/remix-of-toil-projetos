@@ -20,5 +20,5 @@ ENV PORT=3000
 # Volume para persistir uploads entre deploys
 VOLUME ["/app/public/uploads"]
 
-# Rodar migrações e iniciar o servidor
-CMD ["sh", "-c", "npx prisma migrate deploy && npx tsx server/index.ts"]
+# Rodar migrações, atualizar permissões e iniciar o servidor
+CMD ["sh", "-c", "npx prisma migrate deploy && npx tsx prisma/seed-permissions.ts && npx tsx server/index.ts"]
