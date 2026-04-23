@@ -257,7 +257,7 @@ export default function AdminHeader() {
       <div className="space-y-6">
         <PageHeader
           title="Menu do Header"
-          description="Gerencie os itens do menu de navegação"
+          subtitle="Gerencie os itens do menu de navegação"
         />
         <p className="text-muted-foreground">Carregando...</p>
       </div>
@@ -270,7 +270,7 @@ export default function AdminHeader() {
     <div className="space-y-6">
       <PageHeader
         title="Menu do Header"
-        description="Gerencie os itens do menu de navegação com suporte a submenus aninhados"
+        subtitle="Gerencie os itens do menu de navegação com suporte a submenus aninhados"
       />
 
       <Card>
