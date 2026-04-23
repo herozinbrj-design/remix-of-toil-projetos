@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Plus, Pencil, Trash2, Loader2, MoreHorizontal, Upload,
   ShoppingBag, Store, Building2, Stethoscope, UtensilsCrossed,
@@ -59,6 +60,7 @@ interface Segment {
   id: number;
   name: string;
   description: string | null;
+  icon: string | null;
   image: string | null;
   active: boolean;
   order: number;
@@ -83,6 +85,7 @@ function authHeaders(extra?: Record<string, string>) {
 }
 
 export default function AdminSegmentos() {
+  const navigate = useNavigate();
   // Services (Section 1) state
   const [services, setServices] = useState<Service[]>([]);
   const [loadingServices, setLoadingServices] = useState(true);
@@ -94,7 +97,12 @@ export default function AdminSegmentos() {
   const [deleteServiceId, setDeleteServiceId] = useState<number | null>(null);
   const serviceFileInputRef = useRef<HTMLInputElement>(null);
 
-  // Segments (Section 2) state
+  // SEO Segments (Section 2) state
+  const [seoSegments, setSeoSegments] = useState<any[]>([]);
+  const [loadingSeoSegments, setLoadingSeoSegments] = useState(true);
+  const [deleteSeoSegmentId, setDeleteSeoSegmentId] = useState<number | null>(null);
+
+  // Segments (Section 3) state
   const [segments, setSegments] = useState<Segment[]>([]);
   const [loadingSegments, setLoadingSegments] = useState(true);
   const [editSegmentDialog, setEditSegmentDialog] = useState(false);
@@ -119,7 +127,7 @@ export default function AdminSegmentos() {
     }
   }, []);
 
-  // Fetch segments (Section 2)
+  // Fetch segments (Section 3)
   const fetchSegments = useCallback(async () => {
     setLoadingSegments(true);
     try {
@@ -133,10 +141,25 @@ export default function AdminSegmentos() {
     }
   }, []);
 
+  // Fetch SEO segments (Section 2)
+  const fetchSeoSegments = useCallback(async () => {
+    setLoadingSeoSegments(true);
+    try {
+      const res = await fetch("/api/seo-segments");
+      const data = await res.json();
+      if (Array.isArray(data)) setSeoSegments(data);
+    } catch {
+      toast.error("Erro ao carregar segmentos SEO");
+    } finally {
+      setLoadingSeoSegments(false);
+    }
+  }, []);
+
   useEffect(() => { 
     fetchServices();
+    fetchSeoSegments();
     fetchSegments();
-  }, [fetchServices, fetchSegments]);
+  }, [fetchServices, fetchSeoSegments, fetchSegments]);
 
   // ========== SECTION 1: SERVICES (Full table with images) ==========
 
@@ -242,7 +265,7 @@ export default function AdminSegmentos() {
     setDeleteServiceId(null);
   };
 
-  // ========== SECTION 2: SEGMENTS (Simple cards with icons) ==========
+  // ========== SECTION 3: HOME SEGMENTS (Simple cards with icons) ==========
 
   const toggleSegmentActive = async (segment: Segment) => {
     try {
@@ -271,7 +294,7 @@ export default function AdminSegmentos() {
     setEditingSegment(segment);
     setEditName(segment.name);
     setEditDescription(segment.description || "");
-    setEditIcon(segment.image || "Layers");
+    setEditIcon(segment.icon || "Layers");
     setEditSegmentDialog(true);
   };
 
@@ -282,7 +305,7 @@ export default function AdminSegmentos() {
     }
     setSavingSegment(true);
     try {
-      const body = { name: editName, description: editDescription || null, image: editIcon };
+      const body = { name: editName, description: editDescription || null, icon: editIcon };
       if (editingSegment) {
         const res = await fetch(`/api/segments/${editingSegment.id}`, {
           method: "PUT",
@@ -325,7 +348,25 @@ export default function AdminSegmentos() {
     setDeleteSegmentId(null);
   };
 
-  const loading = loadingServices || loadingSegments;
+  // ========== SECTION 2: SEO SEGMENTS ==========
+
+  const handleDeleteSeoSegment = async () => {
+    if (deleteSeoSegmentId === null) return;
+    try {
+      const res = await fetch(`/api/seo-segments/${deleteSeoSegmentId}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
+      if (!res.ok) throw new Error();
+      toast.success("Segmento SEO excluído!");
+      await fetchSeoSegments();
+    } catch {
+      toast.error("Erro ao excluir segmento SEO");
+    }
+    setDeleteSeoSegmentId(null);
+  };
+
+  const loading = loadingServices || loadingSeoSegments || loadingSegments;
 
   if (loading) {
     return (
@@ -342,11 +383,11 @@ export default function AdminSegmentos() {
 
   return (
     <div className="space-y-12">
-      {/* ========== SECTION 1: SERVICES TABLE ========== */}
+      {/* ========== SECTION 1: SERVICES (Full table - /segmentos page) ========== */}
       <div>
         <PageHeader
-          title="Segmentos"
-          subtitle="Serviços exibidos na página /segmentos"
+          title="Serviços"
+          subtitle="Serviços exibidos na página /segmentos com imagem e descrição"
           action={
             <Button size="sm" onClick={openCreateService}>
               <Plus className="w-4 h-4" /> Novo Serviço
@@ -406,21 +447,90 @@ export default function AdminSegmentos() {
         </Card>
       </div>
 
-      {/* ========== SECTION 2: SEGMENTS CARDS ========== */}
+      {/* ========== SECTION 2: SEO SEGMENTS (Full pages with rich content) ========== */}
       <div>
         <PageHeader
-          title="Segmentos que aparecem na Home"
-          subtitle="Cards simples com ícones exibidos na seção de setores"
+          title="Segmentos SEO"
+          subtitle="Páginas completas com conteúdo rico, galeria e formulário de contato"
+          action={
+            <Button size="sm" onClick={() => navigate("/admin/segmentos-seo/novo")}>
+              <Plus className="w-4 h-4" /> Novo Segmento SEO
+            </Button>
+          }
+        />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {seoSegments.map((s) => {
+            const Icon = getIconComponent(s.icon || "");
+            return (
+              <Card
+                key={s.id}
+                className={`transition-colors ${s.active ? "hover:border-primary/30" : "opacity-60"}`}
+              >
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3 flex-1 min-w-0 mr-2">
+                      <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+                        <Icon className="w-5 h-5 text-accent" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold truncate">{s.name}</p>
+                        {s.subtitle && (
+                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{s.subtitle}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => navigate(`/admin/segmentos-seo/${s.id}/editar`)}>
+                        <Pencil className="w-3.5 h-3.5" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => setDeleteSeoSegmentId(s.id)}>
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Badge variant={s.active ? "success" : "secondary"}>{s.active ? "Ativo" : "Inativo"}</Badge>
+                    {s.slug && (
+                      <a
+                        href={`/segmentos/${s.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-accent hover:underline"
+                      >
+                        Ver página
+                      </a>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {seoSegments.length === 0 && (
+          <div className="text-center py-16 text-muted-foreground border-2 border-dashed border-border rounded-lg">
+            <p className="mb-4">Nenhum segmento SEO cadastrado.</p>
+            <Button onClick={() => navigate("/admin/segmentos-seo/novo")}><Plus className="w-4 h-4" /> Criar primeiro segmento SEO</Button>
+          </div>
+        )}
+      </div>
+
+      {/* ========== SECTION 3: HOME SEGMENTS (Simple cards with icons) ========== */}
+      <div>
+        <PageHeader
+          title="Segmentos da Home"
+          subtitle="Cards simples com ícones exibidos na seção de setores da home"
           action={
             <Button size="sm" onClick={openCreateSegment}>
-              <Plus className="w-4 h-4" /> Novo Segmento
+              <Plus className="w-4 h-4" /> Novo Segmento Home
             </Button>
           }
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {segments.map((s) => {
-            const Icon = getIconComponent(s.image || "");
+            const Icon = getIconComponent(s.icon || "");
             return (
               <Card
                 key={s.id}
@@ -465,6 +575,51 @@ export default function AdminSegmentos() {
           </div>
         )}
       </div>
+
+      {/* ========== SEGMENT EDIT/CREATE DIALOG ========== */}
+      <Dialog open={editSegmentDialog} onOpenChange={setEditSegmentDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{editingSegment ? "Editar Segmento" : "Novo Segmento"}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Nome</Label>
+              <Input value={editName} onChange={(e) => setEditName(e.target.value)} placeholder="Ex: Varejo & Franquias" />
+            </div>
+            <div className="space-y-2">
+              <Label>Descrição</Label>
+              <Textarea rows={3} value={editDescription} onChange={(e) => setEditDescription(e.target.value)} placeholder="Breve descrição do segmento..." />
+            </div>
+            <div className="space-y-2">
+              <Label>Ícone</Label>
+              <div className="grid grid-cols-8 gap-2 max-h-[200px] overflow-y-auto p-1">
+                {AVAILABLE_ICONS.map(({ name, icon: IconComp }) => (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={() => setEditIcon(name)}
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
+                      editIcon === name
+                        ? "bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 ring-offset-background"
+                        : "bg-accent/10 text-accent hover:bg-accent/20"
+                    }`}
+                    title={name}
+                  >
+                    <IconComp className="w-5 h-5" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditSegmentDialog(false)}>Cancelar</Button>
+            <Button onClick={handleSaveSegment} disabled={savingSegment}>
+              {savingSegment ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Salvando...</> : "Salvar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* ========== SERVICE EDIT/CREATE DIALOG ========== */}
       <Dialog open={editServiceDialog} onOpenChange={(open) => { setEditServiceDialog(open); if (!open) setEditingService(null); }}>
@@ -543,51 +698,6 @@ export default function AdminSegmentos() {
         </DialogContent>
       </Dialog>
 
-      {/* ========== SEGMENT EDIT/CREATE DIALOG ========== */}
-      <Dialog open={editSegmentDialog} onOpenChange={setEditSegmentDialog}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{editingSegment ? "Editar Segmento" : "Novo Segmento"}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Nome</Label>
-              <Input value={editName} onChange={(e) => setEditName(e.target.value)} placeholder="Ex: Varejo & Franquias" />
-            </div>
-            <div className="space-y-2">
-              <Label>Descrição</Label>
-              <Textarea rows={3} value={editDescription} onChange={(e) => setEditDescription(e.target.value)} placeholder="Breve descrição do segmento..." />
-            </div>
-            <div className="space-y-2">
-              <Label>Ícone</Label>
-              <div className="grid grid-cols-8 gap-2 max-h-[200px] overflow-y-auto p-1">
-                {AVAILABLE_ICONS.map(({ name, icon: IconComp }) => (
-                  <button
-                    key={name}
-                    type="button"
-                    onClick={() => setEditIcon(name)}
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
-                      editIcon === name
-                        ? "bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 ring-offset-background"
-                        : "bg-accent/10 text-accent hover:bg-accent/20"
-                    }`}
-                    title={name}
-                  >
-                    <IconComp className="w-5 h-5" />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditSegmentDialog(false)}>Cancelar</Button>
-            <Button onClick={handleSaveSegment} disabled={savingSegment}>
-              {savingSegment ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Salvando...</> : "Salvar"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       {/* ========== SERVICE DELETE CONFIRMATION ========== */}
       <AlertDialog open={deleteServiceId !== null} onOpenChange={(open) => !open && setDeleteServiceId(null)}>
         <AlertDialogContent>
@@ -612,6 +722,20 @@ export default function AdminSegmentos() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteSegment} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Excluir</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* ========== SEO SEGMENT DELETE CONFIRMATION ========== */}
+      <AlertDialog open={deleteSeoSegmentId !== null} onOpenChange={(open) => !open && setDeleteSeoSegmentId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir segmento SEO?</AlertDialogTitle>
+            <AlertDialogDescription>Esta ação não pode ser desfeita. A página do segmento será removida permanentemente.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteSeoSegment} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Excluir</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

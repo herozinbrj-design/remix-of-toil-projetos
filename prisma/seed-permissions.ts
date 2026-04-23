@@ -32,6 +32,7 @@ async function main() {
     
     // Configurações - Seções
     { key: "edit_settings_banners", name: "Editar Banners", category: "settings", description: "Gerenciar banners do site" },
+    { key: "edit_settings_header", name: "Editar Menu Header", category: "settings", description: "Gerenciar menu de navegação do header" },
     { key: "edit_settings_carousel", name: "Editar Carrossel", category: "settings", description: "Gerenciar carrossel da home" },
     { key: "edit_settings_clients", name: "Editar Clientes", category: "settings", description: "Gerenciar logos de clientes" },
     { key: "edit_settings_footer", name: "Editar Rodapé", category: "settings", description: "Modificar rodapé do site" },

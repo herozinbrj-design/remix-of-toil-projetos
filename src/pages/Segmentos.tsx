@@ -47,9 +47,11 @@ export default function Segmentos() {
                 </div>
                 <h3 className="text-2xl font-display font-bold text-foreground">{s.name}</h3>
                 <p className="text-muted-foreground leading-relaxed">{s.description}</p>
-                <Link to="/contato" className="inline-flex items-center gap-2 text-accent font-semibold hover:gap-3 transition-all">
-                  Solicitar orçamento <ArrowRight className="w-4 h-4" />
-                </Link>
+                <div className="flex items-center gap-4">
+                  <Link to="/contato" className="inline-flex items-center gap-2 text-accent font-semibold hover:gap-3 transition-all">
+                    Solicitar orçamento <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
               </div>
             </BlurReveal>
           ))}

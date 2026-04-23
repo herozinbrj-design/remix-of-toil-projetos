@@ -55,6 +55,7 @@ const navSections: NavSection[] = [
     title: "SEÇÕES",
     items: [
       { id: "banner", label: "Banner Principal", icon: LayoutTemplate, permission: "edit_settings_banners" },
+      { id: "header", label: "Menu Header", icon: Settings, permission: "edit_settings_header" },
       { id: "carrossel", label: "Carrossel Home", icon: Film, permission: "edit_settings_carousel" },
       { id: "clientes", label: "Clientes", icon: Users, permission: "edit_settings_clients" },
       { id: "footer", label: "Footer", icon: PanelBottom, permission: "edit_settings_footer" },
@@ -779,6 +780,7 @@ export default function AdminConfiguracoes() {
                 {activeSection === "geral" && "Informações básicas do site, contato e redes sociais"}
                 {activeSection === "seo" && "Meta tags e otimização para motores de busca"}
                 {activeSection === "banner" && "Gerencie os slides do hero da página inicial"}
+                {activeSection === "header" && "Configure o menu de navegação do header"}
                 {activeSection === "footer" && "Textos, links, contato e redes sociais do rodapé"}
                 {activeSection === "cores" && "Cores do tema, botões e personalizações visuais"}
                 {activeSection === "logos" && "Logomarcas do header e footer"}
@@ -1087,6 +1089,26 @@ export default function AdminConfiguracoes() {
 
           {/* BANNER */}
           {activeSection === "banner" && <AdminBanner />}
+
+          {/* HEADER MENU */}
+          {activeSection === "header" && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Menu de Navegação</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Configure os itens do menu de navegação do header. Você pode criar menus principais, submenus e até submenus aninhados.
+                  </p>
+                  <Button onClick={() => window.location.href = "/admin/header"}>
+                    <Settings className="w-4 h-4 mr-2" />
+                    Gerenciar Menu do Header
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
           {/* CARROSSEL HOME */}
           {activeSection === "carrossel" && (

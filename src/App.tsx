@@ -8,6 +8,7 @@ import WhatsAppButton from "./components/WhatsAppButton";
 import Home from "./pages/Home";
 import Sobre from "./pages/Sobre";
 import Segmentos from "./pages/Segmentos";
+import SegmentoDetalhes from "./pages/SegmentoDetalhes";
 import Portfolio from "./pages/Portfolio";
 import Contato from "./pages/Contato";
 import NotFound from "./pages/NotFound";
@@ -24,11 +25,13 @@ import AdminPortfolio from "./admin/pages/AdminPortfolio";
 import AdminPortfolioForm from "./admin/pages/AdminPortfolioForm";
 import AdminLeads from "./admin/pages/AdminLeads";
 import AdminSegmentos from "./admin/pages/AdminSegmentos";
+import AdminSegmentosForm from "./admin/pages/AdminSegmentosForm";
 import AdminConfiguracoes from "./admin/pages/AdminConfiguracoes";
 import AdminLogin from "./admin/pages/AdminLogin";
 import AdminPerfil from "./admin/pages/AdminPerfil";
 import AdminUsuarios from "./admin/pages/AdminUsuarios";
 import AdminPermissoes from "./admin/pages/AdminPermissoes";
+import AdminHeader from "./admin/pages/AdminHeader";
 
 function App() {
   return (
@@ -50,6 +53,7 @@ function App() {
                       <Route path="/" element={<Home />} />
                       <Route path="/sobre" element={<Sobre />} />
                       <Route path="/segmentos" element={<Segmentos />} />
+                      <Route path="/segmentos/:slug" element={<SegmentoDetalhes />} />
                       <Route path="/portfolio" element={<Portfolio />} />
                       <Route path="/contato" element={<Contato />} />
                       <Route path="*" element={<NotFound />} />
@@ -65,6 +69,8 @@ function App() {
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="segmentos" element={<AdminSegmentos />} />
+              <Route path="segmentos-seo/novo" element={<AdminSegmentosForm />} />
+              <Route path="segmentos-seo/:id/editar" element={<AdminSegmentosForm />} />
               <Route path="portfolio" element={<AdminPortfolio />} />
               <Route path="portfolio/novo" element={<AdminPortfolioForm />} />
               <Route path="portfolio/:id/editar" element={<AdminPortfolioForm />} />
@@ -72,6 +78,7 @@ function App() {
               <Route path="usuarios" element={<AdminUsuarios />} />
               <Route path="permissoes" element={<AdminPermissoes />} />
               <Route path="configuracoes" element={<AdminConfiguracoes />} />
+              <Route path="header" element={<AdminHeader />} />
               <Route path="perfil" element={<AdminPerfil />} />
             </Route>
           </Routes>

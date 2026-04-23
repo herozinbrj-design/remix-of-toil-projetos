@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 // ============================================
@@ -198,14 +199,14 @@ model Lead {
 }
 
 // ============================================
-// SEGMENTS
+// SEGMENTS (Home - Simple Cards)
 // ============================================
 
 model Segment {
   id          Int      @id @default(autoincrement())
   name        String   @unique @db.VarChar(255)
   description String?  @db.Text
-  image       String?  @db.VarChar(500)
+  icon        String?  @db.VarChar(100)
   active      Boolean  @default(true)
   order       Int      @default(0)
   createdAt   DateTime @default(now())
@@ -214,6 +215,27 @@ model Segment {
   portfolios Portfolio[]
 
   @@map("segments")
+}
+
+// ============================================
+// SEO SEGMENTS (Full Pages with Rich Content)
+// ============================================
+
+model SeoSegment {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(255)
+  slug        String   @unique @db.VarChar(255)
+  subtitle    String?  @db.VarChar(500)
+  description String?  @db.Text
+  icon        String?  @db.VarChar(100)
+  image       String?  @db.VarChar(500)
+  gallery     String?  @db.Text
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("seo_segments")
 }
 
 // ============================================
@@ -239,6 +261,28 @@ model Banner {
   updatedAt      DateTime @updatedAt
 
   @@map("banners")
+}
+
+// ============================================
+// HEADER MENU
+// ============================================
+
+model HeaderMenu {
+  id        Int      @id @default(autoincrement())
+  label     String   @db.VarChar(255)
+  link      String?  @db.VarChar(500)
+  parentId  Int?
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parent   HeaderMenu?  @relation("MenuHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children HeaderMenu[] @relation("MenuHierarchy")
+
+  @@index([parentId])
+  @@index([order])
+  @@map("header_menus")
 }
 
 // ============================================

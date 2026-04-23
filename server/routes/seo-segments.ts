@@ -4,22 +4,22 @@ import { authMiddleware } from "../middleware/auth.js";
 
 const router = Router();
 
-// GET /api/segments (público)
+// GET /api/seo-segments (público)
 router.get("/", async (req, res) => {
   const { active } = req.query;
   const where: Record<string, unknown> = {};
   if (active !== undefined) where.active = active === "true";
-  const segments = await prisma.segment.findMany({ where, orderBy: { order: "asc" } });
+  const segments = await prisma.seoSegment.findMany({ where, orderBy: { order: "asc" } });
   res.json(segments);
 });
 
-// GET /api/segments/:idOrSlug (público)
+// GET /api/seo-segments/:idOrSlug (público)
 router.get("/:idOrSlug", async (req, res) => {
   const { idOrSlug } = req.params;
   const isNumeric = /^\d+$/.test(idOrSlug);
   
   try {
-    const segment = await prisma.segment.findFirst({
+    const segment = await prisma.seoSegment.findFirst({
       where: isNumeric ? { id: Number(idOrSlug) } : { slug: idOrSlug },
     });
     
@@ -33,24 +33,24 @@ router.get("/:idOrSlug", async (req, res) => {
   }
 });
 
-// POST /api/segments (protegido)
+// POST /api/seo-segments (protegido)
 router.post("/", authMiddleware, async (req, res) => {
-  const segment = await prisma.segment.create({ data: req.body });
+  const segment = await prisma.seoSegment.create({ data: req.body });
   res.status(201).json(segment);
 });
 
-// PUT /api/segments/:id (protegido)
+// PUT /api/seo-segments/:id (protegido)
 router.put("/:id", authMiddleware, async (req, res) => {
-  const segment = await prisma.segment.update({
+  const segment = await prisma.seoSegment.update({
     where: { id: Number(req.params.id) },
     data: req.body,
   });
   res.json(segment);
 });
 
-// DELETE /api/segments/:id (protegido)
+// DELETE /api/seo-segments/:id (protegido)
 router.delete("/:id", authMiddleware, async (req, res) => {
-  await prisma.segment.delete({ where: { id: Number(req.params.id) } });
+  await prisma.seoSegment.delete({ where: { id: Number(req.params.id) } });
   res.json({ message: "Segmento removido" });
 });
 
